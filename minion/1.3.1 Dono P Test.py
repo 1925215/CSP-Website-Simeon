@@ -3,29 +3,49 @@ import random as rand
 import math
 import winsound
 import threading
-
+import cv2
 
 wn = trtl.Screen()
-wn.bgpic("minion/space background.gif")
+wn.screensize(200,200)
+wn.bgpic("space background.gif")
 
-ship_image = "minion/gruship.gif"
-explosion = "minion/explosion.gif"
-minion1 = "minion/minion1.gif"
-minion2 = "minion/minion2.gif"
-minion3 = "minion/minion3.gif"
-minion4 = "minion/minion4.gif"
-minion5 = "minion/minion5.gif"
-minion6 = "minion/minion6.gif"
-minion7 = "minion/minion7.gif"
-minion8 = "minion/minion1.gif"
-minion9 = "minion/minion2.gif"
-minion10 = "minion/minion3.gif"
-minion11= "minion/minion4.gif"
-minion12= "minion/minion5.gif"
-minion13= "minion/minion6.gif"
-minion14= "minion/minion7.gif"
-card_minion = "minion/click here minion.gif"
-card = "minion/Happy Birthday Card.gif"
+cap = cv2.VideoCapture('videoplayback-ezgif.com-video-cutter.mp4')
+
+if (cap.isOpened()== False):
+    print("Error opening video file")
+
+while(cap.isOpened()):
+    ret, frame = cap.read()
+    if ret == True:
+        cv2.imshow('Frame', frame)
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            break
+    else:
+        break
+
+# When everything done, release
+# the video capture object
+cap.release()
+
+# Closes all the frames
+ship_image = "gruship.gif"
+explosion = "explosion.gif"
+minion1 = "minion1.gif"
+minion2 = "minion2.gif"
+minion3 = "minion3.gif"
+minion4 = "minion4.gif"
+minion5 = "minion5.gif"
+minion6 = "minion6.gif"
+minion7 = "minion7.gif"
+minion8 = "minion1.gif"
+minion9 = "minion2.gif"
+minion10 = "minion3.gif"
+minion11= "minion4.gif"
+minion12= "minion5.gif"
+minion13= "minion6.gif"
+minion14= "minion7.gif"
+card_minion = "click here minion.gif"
+card = "Happy Birthday Card.gif"
 i=0
 j=0
 minions = []
@@ -35,6 +55,7 @@ f= False
 gruship = trtl.Turtle()
 wn = trtl.Screen()
 minion  = trtl.Turtle()
+minion.pu()
 #ship_image = PhotoImage(file=r"minion/Gru Ship.gif").subsample(2,2)
 #wn.addshape("ship_image", Shape("image", ship_image))
 wn.addshape(ship_image)
@@ -109,7 +130,7 @@ def fall():
   wn.tracer(0)
   minion.shape(card_minion)
   minion.goto(0,0)
-  for step in range(650):
+  for step in range(100):
       i=0
       for each in minions:
         minions[i].speed(0)
@@ -122,15 +143,17 @@ def fall():
       wn.update()
       trtl.time.sleep(0.05)
   wn.tracer(1)
+  minion.onclick(click_the_card)
+  wn.listen()
 
 def talk():
-    winsound.PlaySound("minion/minion talk.wav", winsound.SND_ASYNC)
+    winsound.PlaySound("minion talk.wav", winsound.SND_ASYNC)
 
 def explosion_sound():
-    winsound.PlaySound("minion/explosion.wav", winsound.SND_ASYNC)
+    winsound.PlaySound("explosion.wav", winsound.SND_ASYNC)
 
 def happy():
-    winsound.PlaySound("minion/minionsound.wav", winsound.SND_ASYNC)
+    winsound.PlaySound("minionsound.wav", winsound.SND_ASYNC)
 
 def stop():
     winsound.PlaySound(None, winsound.SND_PURGE)
@@ -145,23 +168,21 @@ while i<14:
 
 draw_ship(gruship)
 
-gruship.goto(-500,0)
+gruship.goto(-1000,0)
 talking = threading.Thread(target=talk)
 explode = threading.Thread(target=explosion_sound)
 birthday = threading.Thread(target=happy)
 talking.start()
 gruship.st()
-x=-500
+x=-1000
 while x<0:
   x += 1
   y =math.sin(0.5*x)*2.5
   gruship.goto(x,y)
 
-while f is False:
-  wn.onclick(lambda x,y: exploding(gruship))
-  wn.listen()
 
-minion.onclick(click_the_card)
+wn.onclick(lambda x,y: exploding(gruship))
 wn.listen()
+
 
 wn.mainloop()
